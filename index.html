@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PulseKit — Documentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg2: #f5f5f7;
+    --bg3: #e8e8ed;
+    --surface: #ffffff;
+    --border: rgba(0,0,0,0.08);
+    --border-strong: rgba(0,0,0,0.14);
+    --text: #1d1d1f;
+    --text2: #6e6e73;
+    --text3: #a1a1a6;
+    --accent: #0066cc;
+    --accent-light: #e8f0ff;
+    --accent-hover: #0055b3;
+    --green: #1d9d5c;
+    --green-bg: #e8f5ee;
+    --orange: #c45500;
+    --orange-bg: #fff3e8;
+    --red: #cc0000;
+    --red-bg: #fff0f0;
+    --purple: #6c3dbf;
+    --purple-bg: #f0ebff;
+    --code-bg: #1c1c1e;
+    --code-text: #e8e8ed;
+    --sidebar-w: 260px;
+    --header-h: 52px;
+    --radius: 10px;
+    --radius-sm: 6px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06);
+    --font-body: 'Inter', -apple-system, sans-serif;
+    --font-display: 'Fraunces', serif;
+    --font-mono: 'DM Mono', 'SF Mono', monospace;
+  }
+  [data-theme="dark"] {
+    --bg: #000000;
+    --bg2: #1c1c1e;
+    --bg3: #2c2c2e;
+    --surface: #1c1c1e;
+    --border: rgba(255,255,255,0.1);
+    --border-strong: rgba(255,255,255,0.18);
+    --text: #f5f5f7;
+    --text2: #a1a1a6;
+    --text3: #6e6e73;
+    --accent: #2997ff;
+    --accent-light: rgba(41,151,255,0.12);
+    --accent-hover: #47a8ff;
+    --green: #30d158;
+    --green-bg: rgba(48,209,88,0.1);
+    --orange: #ff9f0a;
+    --orange-bg: rgba(255,159,10,0.1);
+    --red: #ff453a;
+    --red-bg: rgba(255,69,58,0.1);
+    --purple: #bf5af2;
+    --purple-bg: rgba(191,90,242,0.1);
+    --code-bg: #0a0a0a;
+    --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 4px 12px rgba(0,0,0,0.2);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; font-size: 16px; }
+  body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; transition: background 0.2s, color 0.2s; }
+
+  /* ── HEADER ── */
+  header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    height: var(--header-h);
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(20px) saturate(1.8);
+    border-bottom: 0.5px solid var(--border);
+    display: flex; align-items: center; padding: 0 20px;
+    gap: 16px;
+    transition: background 0.2s;
+  }
+  [data-theme="dark"] header { background: rgba(0,0,0,0.85); }
+  .header-logo {
+    display: flex; align-items: center; gap: 9px;
+    text-decoration: none; color: var(--text);
+    font-weight: 600; font-size: 15px; letter-spacing: -0.3px;
+    flex-shrink: 0;
+  }
+  .logo-icon {
+    width: 28px; height: 28px; border-radius: 7px;
+    background: linear-gradient(135deg, #0066cc 0%, #5ac8fa 100%);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 14px; font-weight: 700; letter-spacing: -1px;
+  }
+  .header-sep { width: 0.5px; height: 18px; background: var(--border-strong); }
+  .header-subtitle { font-size: 13px; color: var(--text2); font-weight: 400; }
+  .header-search {
+    margin-left: auto; display: flex; align-items: center; gap: 8px;
+    background: var(--bg2); border: 0.5px solid var(--border);
+    border-radius: 8px; padding: 6px 12px; cursor: text;
+    font-size: 13px; color: var(--text2); min-width: 200px;
+    transition: border-color 0.15s;
+  }
+  .header-search:hover { border-color: var(--border-strong); }
+  .search-icon { opacity: 0.5; font-size: 12px; }
+  .theme-toggle {
+    width: 32px; height: 32px; border-radius: 8px; border: 0.5px solid var(--border);
+    background: var(--bg2); cursor: pointer; display: flex; align-items: center;
+    justify-content: center; font-size: 15px; transition: background 0.15s;
+    flex-shrink: 0;
+  }
+  .theme-toggle:hover { background: var(--bg3); }
+
+  /* ── LAYOUT ── */
+  .layout { display: flex; padding-top: var(--header-h); min-height: 100vh; }
+
+  /* ── SIDEBAR ── */
+  nav {
+    width: var(--sidebar-w); flex-shrink: 0;
+    position: fixed; top: var(--header-h); left: 0; bottom: 0;
+    overflow-y: auto; padding: 24px 0 40px;
+    border-right: 0.5px solid var(--border);
+    background: var(--bg);
+  }
+  nav::-webkit-scrollbar { width: 4px; }
+  nav::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 4px; }
+  .nav-section-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--text3);
+    padding: 20px 20px 6px; display: block;
+  }
+  .nav-section-label:first-child { padding-top: 4px; }
+  nav a {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 20px; font-size: 13.5px; color: var(--text2);
+    text-decoration: none; border-radius: 0;
+    transition: color 0.12s, background 0.12s;
+    border-left: 2px solid transparent; margin-left: -0.5px;
+    line-height: 1.4;
+  }
+  nav a:hover { color: var(--text); background: var(--bg2); }
+  nav a.active { color: var(--accent); background: var(--accent-light); border-left-color: var(--accent); font-weight: 500; }
+  .nav-badge {
+    margin-left: auto; font-size: 10px; font-weight: 600;
+    padding: 1px 6px; border-radius: 4px; flex-shrink: 0;
+  }
+  .badge-new { background: var(--green-bg); color: var(--green); }
+  .badge-beta { background: var(--orange-bg); color: var(--orange); }
+
+  /* ── MAIN CONTENT ── */
+  main {
+    margin-left: var(--sidebar-w);
+    flex: 1; min-width: 0;
+    padding: 0 60px 80px;
+    max-width: calc(var(--sidebar-w) + 860px);
+  }
+
+  /* PAGE SECTIONS */
+  .page-section { display: none; }
+  .page-section.active { display: block; }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 64px 0 48px;
+    border-bottom: 0.5px solid var(--border);
+    margin-bottom: 48px;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--accent-light); color: var(--accent);
+    font-size: 11.5px; font-weight: 600; padding: 4px 10px;
+    border-radius: 20px; margin-bottom: 20px;
+    letter-spacing: 0.02em;
+  }
+  .hero-badge span { font-size: 14px; }
+  .hero h1 {
+    font-family: var(--font-display); font-size: 52px; font-weight: 300;
+    line-height: 1.08; letter-spacing: -1.5px; color: var(--text);
+    margin-bottom: 18px; max-width: 600px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); }
+  .hero p {
+    font-size: 17px; color: var(--text2); max-width: 520px;
+    line-height: 1.65; font-weight: 300; margin-bottom: 32px;
+  }
+  .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: var(--accent); color: white; text-decoration: none;
+    padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 500;
+    transition: background 0.15s, transform 0.1s;
+    border: none; cursor: pointer;
+  }
+  .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: var(--bg2); color: var(--text); text-decoration: none;
+    padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 500;
+    border: 0.5px solid var(--border-strong); transition: background 0.15s;
+    cursor: pointer;
+  }
+  .btn-secondary:hover { background: var(--bg3); }
+  .hero-meta {
+    display: flex; gap: 24px; margin-top: 36px; flex-wrap: wrap;
+  }
+  .meta-item { font-size: 12.5px; color: var(--text3); display: flex; align-items: center; gap: 5px; }
+  .meta-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--text3); }
+
+  /* ── TYPOGRAPHY ── */
+  h2 {
+    font-family: var(--font-display); font-size: 32px; font-weight: 400;
+    letter-spacing: -0.8px; color: var(--text); margin: 48px 0 14px;
+    line-height: 1.15;
+  }
+  h2:first-child { margin-top: 0; }
+  h3 {
+    font-size: 19px; font-weight: 600; color: var(--text);
+    margin: 36px 0 10px; letter-spacing: -0.3px;
+  }
+  h4 {
+    font-size: 14px; font-weight: 600; color: var(--text);
+    margin: 24px 0 8px; text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  p { font-size: 15.5px; color: var(--text2); line-height: 1.7; margin-bottom: 16px; }
+  p:last-child { margin-bottom: 0; }
+  strong { color: var(--text); font-weight: 600; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── CODE ── */
+  pre {
+    background: var(--code-bg); border-radius: var(--radius);
+    overflow: hidden; margin: 20px 0; position: relative;
+    border: 0.5px solid rgba(255,255,255,0.06);
+    box-shadow: var(--shadow);
+  }
+  .code-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 16px 10px; background: rgba(255,255,255,0.04);
+    border-bottom: 0.5px solid rgba(255,255,255,0.07);
+  }
+  .code-lang { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 0.08em; }
+  .code-filename { font-size: 12px; color: rgba(255,255,255,0.35); font-family: var(--font-mono); }
+  .code-copy {
+    font-size: 11px; color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.07);
+    border: none; border-radius: 4px; padding: 3px 8px; cursor: pointer;
+    font-family: var(--font-body); transition: color 0.12s, background 0.12s;
+  }
+  .code-copy:hover { color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.12); }
+  .code-copy.copied { color: #30d158; }
+  pre code {
+    display: block; padding: 18px 20px; font-family: var(--font-mono);
+    font-size: 13.5px; line-height: 1.65; color: var(--code-text);
+    white-space: pre; overflow-x: auto;
+  }
+  /* Syntax tokens */
+  .kw { color: #fc97be; } /* keyword */
+  .ty { color: #6dc8f3; } /* type */
+  .fn { color: #82c7ff; } /* function */
+  .st { color: #fbbb7e; } /* string */
+  .cm { color: #6e6e73; font-style: italic; } /* comment */
+  .nu { color: #d0b8ff; } /* number */
+  .at { color: #ff9f59; } /* attribute/decorator */
+  .op { color: #7fbfff; } /* operator */
+  .pr { color: #82c7ff; } /* property */
+
+  code:not(pre code) {
+    font-family: var(--font-mono); font-size: 13px;
+    background: var(--bg2); color: var(--text);
+    padding: 2px 6px; border-radius: 4px;
+    border: 0.5px solid var(--border);
+  }
+
+  /* ── CALLOUTS ── */
+  .callout {
+    display: flex; gap: 14px; padding: 16px 18px;
+    border-radius: var(--radius); margin: 20px 0;
+    border: 0.5px solid;
+  }
+  .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .callout-body { flex: 1; }
+  .callout-title { font-size: 13.5px; font-weight: 600; margin-bottom: 4px; }
+  .callout-text { font-size: 13.5px; line-height: 1.6; margin: 0; }
+  .callout.tip { background: var(--green-bg); border-color: var(--green); }
+  .callout.tip .callout-title { color: var(--green); }
+  .callout.tip .callout-text { color: var(--text2); }
+  .callout.note { background: var(--accent-light); border-color: var(--accent); }
+  .callout.note .callout-title { color: var(--accent); }
+  .callout.note .callout-text { color: var(--text2); }
+  .callout.warning { background: var(--orange-bg); border-color: var(--orange); }
+  .callout.warning .callout-title { color: var(--orange); }
+  .callout.warning .callout-text { color: var(--text2); }
+  .callout.important { background: var(--purple-bg); border-color: var(--purple); }
+  .callout.important .callout-title { color: var(--purple); }
+  .callout.important .callout-text { color: var(--text2); }
+
+  /* ── COMPARISON TABLE ── */
+  .table-wrap { overflow-x: auto; margin: 20px 0; border-radius: var(--radius); border: 0.5px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th {
+    background: var(--bg2); padding: 11px 16px; text-align: left;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.04em;
+    text-transform: uppercase; color: var(--text2);
+    border-bottom: 0.5px solid var(--border);
+  }
+  td { padding: 11px 16px; border-bottom: 0.5px solid var(--border); color: var(--text2); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--bg2); }
+  .check { color: var(--green); font-weight: 700; }
+  .cross { color: var(--text3); }
+  .highlight-row td { font-weight: 600; color: var(--text); }
+  .highlight-row td:first-child { color: var(--accent); }
+
+  /* ── STEPS ── */
+  .steps { margin: 24px 0; }
+  .step {
+    display: grid; grid-template-columns: 36px 1fr;
+    gap: 0 20px; margin-bottom: 32px; align-items: start;
+  }
+  .step-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--accent); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 600; flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .step-content h3 { margin-top: 4px; margin-bottom: 8px; }
+  .step-content p { margin-bottom: 12px; }
+
+  /* ── CARDS GRID ── */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin: 20px 0; }
+  .card {
+    background: var(--surface); border: 0.5px solid var(--border);
+    border-radius: var(--radius); padding: 18px 18px 16px;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+    cursor: default;
+  }
+  .card:hover { border-color: var(--accent); box-shadow: var(--shadow); transform: translateY(-2px); }
+  .card-icon { font-size: 22px; margin-bottom: 10px; }
+  .card-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+  .card-desc { font-size: 13px; color: var(--text2); line-height: 1.5; }
+
+  /* ── MODULE TABLE ── */
+  .module-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+  .module-card {
+    background: var(--bg2); border-radius: var(--radius); padding: 16px 18px;
+    border: 0.5px solid var(--border);
+  }
+  .module-name { font-family: var(--font-mono); font-size: 13.5px; font-weight: 500; color: var(--accent); margin-bottom: 5px; }
+  .module-desc { font-size: 13px; color: var(--text2); line-height: 1.5; }
+
+  /* ── DIVIDER ── */
+  hr { border: none; border-top: 0.5px solid var(--border); margin: 40px 0; }
+
+  /* ── PARAM TABLE ── */
+  .param-table { margin: 16px 0; }
+  .param-row {
+    display: grid; grid-template-columns: 180px 1fr;
+    gap: 0; padding: 10px 0;
+    border-bottom: 0.5px solid var(--border);
+    align-items: start;
+  }
+  .param-row:last-child { border-bottom: none; }
+  .param-name { font-family: var(--font-mono); font-size: 13px; color: var(--accent); padding-right: 16px; padding-top: 1px; font-weight: 500; }
+  .param-desc { font-size: 13.5px; color: var(--text2); line-height: 1.6; }
+  .param-type { font-size: 11.5px; font-family: var(--font-mono); color: var(--text3); display: block; margin-top: 2px; }
+
+  /* ── INTRO BANNER ── */
+  .version-banner {
+    display: flex; align-items: center; gap: 10px; padding: 10px 16px;
+    background: var(--bg2); border-radius: var(--radius);
+    border: 0.5px solid var(--border); font-size: 13px; margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+  .version-pill { background: var(--accent); color: white; border-radius: 4px; padding: 1px 8px; font-size: 11.5px; font-weight: 600; }
+  .version-text { color: var(--text2); }
+  .version-links { margin-left: auto; display: flex; gap: 12px; }
+  .version-links a { font-size: 12.5px; color: var(--accent); }
+
+  /* ── INLINE DIAGRAM ── */
+  .arch-diagram {
+    background: var(--bg2); border-radius: var(--radius);
+    border: 0.5px solid var(--border); padding: 28px 24px;
+    margin: 24px 0; font-family: var(--font-mono); font-size: 12.5px;
+    color: var(--text2); line-height: 1.9; overflow-x: auto;
+  }
+
+  /* ── PLUGIN LIST ── */
+  .plugin-list { margin: 20px 0; }
+  .plugin-item {
+    display: flex; gap: 16px; align-items: flex-start;
+    padding: 14px 0; border-bottom: 0.5px solid var(--border);
+  }
+  .plugin-item:last-child { border-bottom: none; }
+  .plugin-icon {
+    width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 17px;
+  }
+  .plugin-meta { flex: 1; }
+  .plugin-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .plugin-desc { font-size: 13.5px; color: var(--text2); line-height: 1.5; }
+  .plugin-tag { font-size: 11px; font-family: var(--font-mono); color: var(--text3); margin-top: 4px; display: block; }
+
+  /* ── PAGINATION ── */
+  .page-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 40px; margin-top: 40px;
+    border-top: 0.5px solid var(--border);
+  }
+  .page-nav-btn {
+    display: flex; flex-direction: column; gap: 3px;
+    padding: 14px 20px; border-radius: var(--radius);
+    border: 0.5px solid var(--border); background: var(--surface);
+    cursor: pointer; text-decoration: none; transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .page-nav-btn:hover { border-color: var(--accent); box-shadow: var(--shadow); }
+  .page-nav-btn.next { align-items: flex-end; }
+  .page-nav-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+  .page-nav-title { font-size: 14px; font-weight: 600; color: var(--accent); }
+
+  /* ── SCROLL TO TOP ── */
+  #scroll-top {
+    position: fixed; bottom: 24px; right: 24px; z-index: 50;
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--bg2); border: 0.5px solid var(--border-strong);
+    box-shadow: var(--shadow); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; opacity: 0; transition: opacity 0.2s, transform 0.2s;
+    transform: translateY(8px); color: var(--text2);
+  }
+  #scroll-top.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── MOBILE ── */
+  .mobile-nav-toggle {
+    display: none; background: none; border: none; cursor: pointer;
+    font-size: 18px; padding: 6px; color: var(--text);
+  }
+  @media (max-width: 768px) {
+    .mobile-nav-toggle { display: block; }
+    nav { transform: translateX(-100%); transition: transform 0.25s; z-index: 90; }
+    nav.open { transform: translateX(0); }
+    main { margin-left: 0; padding: 0 20px 60px; }
+    .hero h1 { font-size: 36px; }
+    .module-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .page-section.active { animation: fadeUp 0.3s ease both; }
+  .hero { animation: fadeUp 0.4s ease both; }
+  .hero h1 { animation: fadeUp 0.4s 0.05s ease both; }
+  .hero p { animation: fadeUp 0.4s 0.1s ease both; }
+  .hero-actions { animation: fadeUp 0.4s 0.15s ease both; }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <button class="mobile-nav-toggle" onclick="toggleNav()">☰</button>
+  <a class="header-logo" href="#" onclick="showPage('overview')">
+    <div class="logo-icon">⚡</div>
+    PulseKit
+  </a>
+  <div class="header-sep"></div>
+  <span class="header-subtitle">Documentation</span>
+  <div class="header-search" onclick="alert('Search coming soon!')">
+    <span class="search-icon">⌕</span>
+    Search documentation…
+    <span style="margin-left:auto;font-size:11px;opacity:0.4">⌘K</span>
+  </div>
+  <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">🌙</button>
+</header>
+
+<!-- ── LAYOUT ── -->
+<div class="layout">
+
+<!-- ── SIDEBAR ── -->
+<nav id="sidebar">
+  <span class="nav-section-label">Getting Started</span>
+  <a href="#" class="active" onclick="showPage('overview')">Overview</a>
+  <a href="#" onclick="showPage('installation')">Installation</a>
+  <a href="#" onclick="showPage('quickstart')">Quick Start</a>
+  <a href="#" onclick="showPage('configuration')">Configuration</a>
+
+  <span class="nav-section-label">Core Concepts</span>
+  <a href="#" onclick="showPage('endpoints')">Endpoints</a>
+  <a href="#" onclick="showPage('client')">PulseClient</a>
+  <a href="#" onclick="showPage('errors')">Error Handling</a>
+  <a href="#" onclick="showPage('concurrency')">Concurrency</a>
+
+  <span class="nav-section-label">Plugins</span>
+  <a href="#" onclick="showPage('plugin-system')">Plugin System</a>
+  <a href="#" onclick="showPage('auth-plugin')">AuthPlugin</a>
+  <a href="#" onclick="showPage('logger-plugin')">LoggerPlugin</a>
+  <a href="#" onclick="showPage('retry-plugin')">RetryPlugin <span class="nav-badge badge-new">New</span></a>
+  <a href="#" onclick="showPage('cache-plugin')">CachePlugin</a>
+  <a href="#" onclick="showPage('circuit-breaker')">CircuitBreaker</a>
+
+  <span class="nav-section-label">Advanced</span>
+  <a href="#" onclick="showPage('offline')">Offline-First <span class="nav-badge badge-new">New</span></a>
+  <a href="#" onclick="showPage('swiftui')">SwiftUI Integration</a>
+  <a href="#" onclick="showPage('websocket')">WebSockets</a>
+  <a href="#" onclick="showPage('security')">Security</a>
+  <a href="#" onclick="showPage('observability')">Observability</a>
+
+  <span class="nav-section-label">Reference</span>
+  <a href="#" onclick="showPage('api')">API Reference</a>
+  <a href="#" onclick="showPage('testing')">Testing Guide</a>
+  <a href="#" onclick="showPage('migration')">Migration Guide <span class="nav-badge badge-beta">Beta</span></a>
+</nav>
+
+<!-- ── MAIN ── -->
+<main id="main-content">
+
+<!-- ══════════════════════════════════════════ OVERVIEW -->
+<div class="page-section active" id="page-overview">
+  <div class="hero">
+    <div class="hero-badge"><span>⚡</span> Version 1.0</div>
+    <h1>Build <em>smarter</em><br>iOS networking</h1>
+    <p>PulseKit is a next-generation Swift networking framework with offline-first capabilities, plugin middleware, smart retries, and real-time observability. No dependencies. Pure URLSession.</p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="showPage('quickstart')">Get started →</button>
+      <button class="btn-secondary" onclick="showPage('installation')">Installation</button>
+    </div>
+    <div class="hero-meta">
+      <span class="meta-item">Swift 5.9+</span>
+      <span class="meta-item"><span class="meta-dot"></span>iOS 15+</span>
+      <span class="meta-item"><span class="meta-dot"></span>No dependencies</span>
+      <span class="meta-item"><span class="meta-dot"></span>MIT License</span>
+    </div>
+  </div>
+
+  <div class="version-banner">
+    <span class="version-pill">v1.0</span>
+    <span class="version-text">Latest stable release — Swift Package Manager ready</span>
+    <div class="version-links">
+      <a href="#">GitHub →</a>
+      <a href="#">Changelog</a>
+    </div>
+  </div>
+
+  <h2>Why PulseKit?</h2>
+  <p>Most iOS networking libraries stop at HTTP. PulseKit is designed for the hard parts that come after — token refresh storms, offline resilience, cascade failures, distributed tracing, and end-to-end type safety.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Feature</th><th>URLSession</th><th>Alamofire</th><th>PulseKit</th></tr></thead>
+      <tbody>
+        <tr><td>async/await</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Combine publishers</td><td class="cross">—</td><td>Partial</td><td class="check">✓</td></tr>
+        <tr><td>Plugin middleware</td><td class="cross">—</td><td class="cross">—</td><td class="check">✓</td></tr>
+        <tr><td>Offline queue</td><td class="cross">—</td><td class="cross">—</td><td class="check">✓</td></tr>
+        <tr><td>Circuit breaker</td><td class="cross">—</td><td class="cross">—</td><td class="check">✓</td></tr>
+        <tr><td>Built-in metrics</td><td class="cross">—</td><td class="cross">—</td><td class="check">✓</td></tr>
+        <tr class="highlight-row"><td>SwiftUI @APIRequest</td><td class="cross">—</td><td class="cross">—</td><td class="check">✓</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Modules</h2>
+  <p>Import only what you need. PulseKit is split into focused modules for lean integrations.</p>
+  <div class="module-grid">
+    <div class="module-card"><div class="module-name">PulseCore</div><div class="module-desc">Protocols, models, errors, configuration. Zero dependencies.</div></div>
+    <div class="module-card"><div class="module-name">PulseNetworking</div><div class="module-desc">HTTP client, transport, retry engine, Combine bridge.</div></div>
+    <div class="module-card"><div class="module-name">PulsePlugins</div><div class="module-desc">Logger, Auth, Retry, Cache, CircuitBreaker.</div></div>
+    <div class="module-card"><div class="module-name">PulseStorage</div><div class="module-desc">Offline queue with NWPathMonitor and disk persistence.</div></div>
+    <div class="module-card"><div class="module-name">PulseObservability</div><div class="module-desc">Event bus, latency percentiles, metrics collection.</div></div>
+    <div class="module-card"><div class="module-name">PulseUI</div><div class="module-desc">SwiftUI debug panel. Use in #if DEBUG builds only.</div></div>
+  </div>
+
+  <div class="page-nav">
+    <div></div>
+    <a class="page-nav-btn next" href="#" onclick="showPage('installation')">
+      <span class="page-nav-label">Next</span>
+      <span class="page-nav-title">Installation →</span>
+    </a>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ INSTALLATION -->
+<div class="page-section" id="page-installation">
+  <div class="hero" style="padding-bottom:32px">
+    <h1>Installation</h1>
+    <p>Add PulseKit to your project using Swift Package Manager in under a minute.</p>
+  </div>
+
+  <h2>Swift Package Manager</h2>
+  <h3>In Xcode</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>Open the Package Manager</h3>
+        <p>In Xcode, choose <strong>File → Add Package Dependencies…</strong></p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>Enter the repository URL</h3>
+        <pre><code class="cm">// Paste this URL into the search field</code><br><code>https://github.com/your-org/PulseKit.git</code></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>Choose modules</h3>
+        <p>Select the modules you need. For most apps, add <code>PulseNetworking</code> and <code>PulsePlugins</code>. Add <code>PulseUI</code> only to debug targets.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>In Package.swift</h3>
+  <pre>
+<div class="code-header"><span class="code-filename">Package.swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="kw">let</span> package <span class="op">=</span> <span class="ty">Package</span>(
+    name: <span class="st">"MyApp"</span>,
+    platforms: [.<span class="fn">iOS</span>(.<span class="nu">v15</span>)],
+    dependencies: [
+        .<span class="fn">package</span>(
+            url: <span class="st">"https://github.com/your-org/PulseKit.git"</span>,
+            from: <span class="st">"1.0.0"</span>
+        )
+    ],
+    targets: [
+        .<span class="fn">target</span>(
+            name: <span class="st">"MyApp"</span>,
+            dependencies: [
+                .<span class="fn">product</span>(name: <span class="st">"PulseNetworking"</span>, package: <span class="st">"PulseKit"</span>),
+                .<span class="fn">product</span>(name: <span class="st">"PulsePlugins"</span>,    package: <span class="st">"PulseKit"</span>),
+            ]
+        )
+    ]
+)</code></pre>
+
+  <h2>Requirements</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Platform</th><th>Minimum Version</th></tr></thead>
+      <tbody>
+        <tr><td>iOS</td><td>15.0+</td></tr>
+        <tr><td>macOS</td><td>12.0+</td></tr>
+        <tr><td>watchOS</td><td>8.0+</td></tr>
+        <tr><td>tvOS</td><td>15.0+</td></tr>
+        <tr><td>Swift</td><td>5.9+</td></tr>
+        <tr><td>Xcode</td><td>15.0+</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout note">
+    <span class="callout-icon">ℹ</span>
+    <div class="callout-body">
+      <p class="callout-title">No third-party dependencies</p>
+      <p class="callout-text">PulseKit uses only Apple frameworks: URLSession, Combine, Network, CryptoKit, and SwiftUI. Your app's dependency graph stays clean.</p>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <a class="page-nav-btn" href="#" onclick="showPage('overview')"><span class="page-nav-label">Previous</span><span class="page-nav-title">← Overview</span></a>
+    <a class="page-nav-btn next" href="#" onclick="showPage('quickstart')"><span class="page-nav-label">Next</span><span class="page-nav-title">Quick Start →</span></a>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ QUICK START -->
+<div class="page-section" id="page-quickstart">
+  <div class="hero" style="padding-bottom:32px">
+    <h1>Quick Start</h1>
+    <p>Make your first network request with PulseKit in three steps.</p>
+  </div>
+
+  <h2>1. Define an endpoint</h2>
+  <p>An <code>Endpoint</code> is a value type that declaratively describes a single API request. It has no side effects — just data.</p>
+  <pre>
+<div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="kw">import</span> <span class="ty">PulseCore</span>
+
+<span class="kw">struct</span> <span class="ty">GetUsersEndpoint</span>: <span class="ty">Endpoint</span> {
+    <span class="kw">typealias</span> <span class="ty">Response</span> = [<span class="ty">User</span>]   <span class="cm">// Decoded automatically</span>
+
+    <span class="kw">var</span> path:   <span class="ty">String</span>     { <span class="st">"/users"</span> }
+    <span class="kw">var</span> method: <span class="ty">HTTPMethod</span> { .<span class="fn">get</span> }
+    <span class="kw">var</span> queryParameters: [<span class="ty">String</span>: <span class="ty">String</span>] {
+        [<span class="st">"page"</span>: <span class="ty">String</span>(page)]
+    }
+
+    <span class="kw">let</span> page: <span class="ty">Int</span>
+}</code></pre>
+
+  <h2>2. Create a client</h2>
+  <p>Configure once at app startup, then share via dependency injection or <code>PulseClient.default</code>.</p>
+  <pre>
+<div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="kw">import</span> <span class="ty">PulseNetworking</span>
+<span class="kw">import</span> <span class="ty">PulsePlugins</span>
+
+<span class="kw">let</span> config = <span class="ty">PulseConfiguration</span>(
+    baseURL: <span class="ty">URL</span>(string: <span class="st">"https://api.example.com/v1"</span>)<span class="op">!</span>
+)
+
+<span class="kw">let</span> client = <span class="ty">PulseClient</span>(
+    configuration: config,
+    plugins: [
+        <span class="ty">AuthPlugin</span>(tokenProvider: myTokenStore),
+        <span class="ty">LoggerPlugin</span>(),
+        <span class="ty">RetryPlugin</span>(maxAttempts: <span class="nu">3</span>)
+    ]
+)</code></pre>
+
+  <h2>3. Make a request</h2>
+  <p>PulseKit supports async/await, Combine, and the <code>@APIRequest</code> SwiftUI property wrapper.</p>
+  <pre>
+<div class="code-header"><span class="code-lang">Swift — async/await</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="cm">// async/await</span>
+<span class="kw">let</span> users = <span class="kw">try await</span> client.<span class="fn">request</span>(<span class="ty">GetUsersEndpoint</span>(page: <span class="nu">1</span>))
+
+<span class="cm">// Combine publisher</span>
+client.<span class="fn">publisher</span>(for: <span class="ty">GetUsersEndpoint</span>(page: <span class="nu">1</span>))
+    .<span class="fn">receive</span>(on: <span class="ty">DispatchQueue</span>.main)
+    .<span class="fn">assign</span>(to: <span class="op">\</span>.<span class="pr">users</span>, on: viewModel)
+    .<span class="fn">store</span>(in: <span class="op">&</span>cancellables)
+
+<span class="cm">// SwiftUI @APIRequest</span>
+<span class="at">@APIRequest</span>(<span class="ty">GetUsersEndpoint</span>(page: <span class="nu">1</span>), autoFetch: <span class="kw">true</span>)
+<span class="kw">var</span> users: <span class="ty">RequestPhase</span>&lt;[<span class="ty">User</span>]&gt;</code></pre>
+
+  <div class="callout tip">
+    <span class="callout-icon">✦</span>
+    <div class="callout-body">
+      <p class="callout-title">Tip — Share one client per domain</p>
+      <p class="callout-text">Create one <code>PulseClient</code> per API domain and share it app-wide. Each client maintains its own plugin chain, retry state, and offline queue. Having multiple clients for the same base URL wastes resources.</p>
+    </div>
+  </div>
+
+  <h2>Complete example</h2>
+  <pre>
+<div class="code-header"><span class="code-lang">Swift</span><span class="code-filename">ContentView.swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="kw">import</span> <span class="ty">SwiftUI</span>
+<span class="kw">import</span> <span class="ty">PulseCore</span>
+<span class="kw">import</span> <span class="ty">PulseNetworking</span>
+
+<span class="kw">struct</span> <span class="ty">User</span>: <span class="ty">Codable</span>, <span class="ty">Identifiable</span> {
+    <span class="kw">let</span> id: <span class="ty">Int</span>
+    <span class="kw">let</span> name: <span class="ty">String</span>
+    <span class="kw">let</span> email: <span class="ty">String</span>
+}
+
+<span class="kw">struct</span> <span class="ty">GetUsersEndpoint</span>: <span class="ty">Endpoint</span> {
+    <span class="kw">typealias</span> <span class="ty">Response</span> = [<span class="ty">User</span>]
+    <span class="kw">var</span> path: <span class="ty">String</span>   { <span class="st">"/users"</span> }
+    <span class="kw">var</span> method: <span class="ty">HTTPMethod</span> { .<span class="fn">get</span> }
+}
+
+<span class="kw">struct</span> <span class="ty">UsersView</span>: <span class="ty">View</span> {
+    <span class="at">@APIRequest</span>(<span class="ty">GetUsersEndpoint</span>(), autoFetch: <span class="kw">true</span>)
+    <span class="kw">var</span> users: <span class="ty">RequestPhase</span>&lt;[<span class="ty">User</span>]&gt;
+
+    <span class="kw">var</span> body: <span class="kw">some</span> <span class="ty">View</span> {
+        <span class="kw">switch</span> users {
+        <span class="kw">case</span> .<span class="fn">loading</span>:
+            <span class="ty">ProgressView</span>()
+        <span class="kw">case</span> .<span class="fn">success</span>(<span class="kw">let</span> list):
+            <span class="ty">List</span>(list) { <span class="ty">Text</span>(<span class="op">$</span><span class="nu">0</span>.name) }
+        <span class="kw">case</span> .<span class="fn">failure</span>(<span class="kw">let</span> error):
+            <span class="ty">Text</span>(error.localizedDescription <span class="op">??</span> <span class="st">"Error"</span>)
+        <span class="kw">default</span>: <span class="ty">EmptyView</span>()
+        }
+    }
+}</code></pre>
+
+  <div class="page-nav">
+    <a class="page-nav-btn" href="#" onclick="showPage('installation')"><span class="page-nav-label">Previous</span><span class="page-nav-title">← Installation</span></a>
+    <a class="page-nav-btn next" href="#" onclick="showPage('endpoints')"><span class="page-nav-label">Next</span><span class="page-nav-title">Endpoints →</span></a>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ ENDPOINTS -->
+<div class="page-section" id="page-endpoints">
+  <div class="hero" style="padding-bottom:32px">
+    <h1>Endpoints</h1>
+    <p>The <code>Endpoint</code> protocol is the backbone of PulseKit's declarative API layer. Every network request is a value type.</p>
+  </div>
+
+  <h2>The Endpoint protocol</h2>
+  <pre>
+<div class="code-header"><span class="code-lang">Swift</span><span class="code-filename">PulseCore/Endpoint.swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="kw">public protocol</span> <span class="ty">Endpoint</span>: <span class="ty">Sendable</span> {
+    <span class="kw">associatedtype</span> <span class="ty">Response</span>: <span class="ty">Decodable</span>
+
+    <span class="kw">var</span> path:              <span class="ty">String</span>               { <span class="kw">get</span> }
+    <span class="kw">var</span> method:            <span class="ty">HTTPMethod</span>           { <span class="kw">get</span> }
+    <span class="kw">var</span> queryParameters:   [<span class="ty">String</span>: <span class="ty">String</span>]     { <span class="kw">get</span> }
+    <span class="kw">var</span> headers:           [<span class="ty">String</span>: <span class="ty">String</span>]     { <span class="kw">get</span> }
+    <span class="kw">var</span> body:              <span class="ty">RequestBody</span>          { <span class="kw">get</span> }
+    <span class="kw">var</span> timeoutInterval:   <span class="ty">TimeInterval</span>         { <span class="kw">get</span> }
+    <span class="kw">var</span> isQueueableWhenOffline: <span class="ty">Bool</span>           { <span class="kw">get</span> }
+}</code></pre>
+
+  <h3>Properties</h3>
+  <div class="param-table">
+    <div class="param-row"><div class="param-name">path</div><div class="param-desc">Relative path appended to the client's <code>baseURL</code>. Include a leading slash.<span class="param-type">String</span></div></div>
+    <div class="param-row"><div class="param-name">method</div><div class="param-desc">HTTP method. <code>.get</code>, <code>.post</code>, <code>.put</code>, <code>.patch</code>, <code>.delete</code>, etc.<span class="param-type">HTTPMethod</span></div></div>
+    <div class="param-row"><div class="param-name">queryParameters</div><div class="param-desc">URL query params. Keys are percent-encoded automatically. Default: empty.<span class="param-type">[String: String]</span></div></div>
+    <div class="param-row"><div class="param-name">headers</div><div class="param-desc">Per-endpoint headers, merged with global config headers. Endpoint headers win on conflict.<span class="param-type">[String: String]</span></div></div>
+    <div class="param-row"><div class="param-name">body</div><div class="param-desc">Request body. Use <code>.json()</code>, <code>.formURLEncoded()</code>, <code>.multipart()</code>, or <code>.graphQL()</code>. Default: <code>.none</code>.<span class="param-type">RequestBody</span></div></div>
+    <div class="param-row"><div class="param-name">timeoutInterval</div><div class="param-desc">Request-level timeout in seconds. Overrides the client's default. Default: <code>30</code>.<span class="param-type">TimeInterval</span></div></div>
+    <div class="param-row"><div class="param-name">isQueueableWhenOffline</div><div class="param-desc">If <code>true</code>, failed requests due to no connection are added to the offline queue. Default: <code>false</code>.<span class="param-type">Bool</span></div></div>
+  </div>
+
+  <h2>Request body types</h2>
+  <pre>
+<div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="cm">// JSON body — sets Content-Type: application/json automatically</span>
+<span class="kw">var</span> body: <span class="ty">RequestBody</span> { .<span class="fn">json</span>(CreateUserRequest(name: name)) }
+
+<span class="cm">// Form URL-encoded — sets Content-Type: application/x-www-form-urlencoded</span>
+<span class="kw">var</span> body: <span class="ty">RequestBody</span> { .<span class="fn">formURLEncoded</span>([<span class="st">"username"</span>: username]) }
+
+<span class="cm">// Multipart upload — for file and image uploads</span>
+<span class="kw">var</span> body: <span class="ty">RequestBody</span> {
+    <span class="kw">let</span> part = <span class="ty">MultipartFormData</span>.<span class="ty">Part</span>(
+        name: <span class="st">"avatar"</span>, data: imageData,
+        filename: <span class="st">"avatar.jpg"</span>, mimeType: <span class="st">"image/jpeg"</span>
+    )
+    <span class="kw">return</span> .<span class="fn">multipart</span>(<span class="ty">MultipartFormData</span>(parts: [part]))
+}
+
+<span class="cm">// GraphQL — wraps in {"query": ..., "variables": ...}</span>
+<span class="kw">var</span> body: <span class="ty">RequestBody</span> {
+    .<span class="fn">graphQL</span>(query: <span class="st">"query { users { id name } }"</span>, variables: <span class="kw">nil</span>)
+}</code></pre>
+
+  <h2>Practical examples</h2>
+  <pre>
+<div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="cm">// GET with query parameters</span>
+<span class="kw">struct</span> <span class="ty">SearchUsersEndpoint</span>: <span class="ty">Endpoint</span> {
+    <span class="kw">typealias</span> <span class="ty">Response</span> = [<span class="ty">User</span>]
+    <span class="kw">var</span> path: <span class="ty">String</span> { <span class="st">"/users/search"</span> }
+    <span class="kw">var</span> method: <span class="ty">HTTPMethod</span> { .<span class="fn">get</span> }
+    <span class="kw">var</span> queryParameters: [<span class="ty">String</span>: <span class="ty">String</span>] {
+        [<span class="st">"q"</span>: query, <span class="st">"page"</span>: <span class="ty">String</span>(page)]
+    }
+    <span class="kw">let</span> query: <span class="ty">String</span>; <span class="kw">let</span> page: <span class="ty">Int</span>
+}
+
+<span class="cm">// POST with JSON body</span>
+<span class="kw">struct</span> <span class="ty">CreateUserEndpoint</span>: <span class="ty">Endpoint</span> {
+    <span class="kw">typealias</span> <span class="ty">Response</span> = <span class="ty">User</span>
+    <span class="kw">struct</span> <span class="ty">Body</span>: <span class="ty">Encodable</span>, <span class="ty">Sendable</span> { <span class="kw">let</span> name: <span class="ty">String</span>; <span class="kw">let</span> email: <span class="ty">String</span> }
+    <span class="kw">var</span> path: <span class="ty">String</span> { <span class="st">"/users"</span> }
+    <span class="kw">var</span> method: <span class="ty">HTTPMethod</span> { .<span class="fn">post</span> }
+    <span class="kw">var</span> body: <span class="ty">RequestBody</span> { .<span class="fn">json</span>(<span class="ty">Body</span>(name: name, email: email)) }
+    <span class="kw">let</span> name: <span class="ty">String</span>; <span class="kw">let</span> email: <span class="ty">String</span>
+}
+
+<span class="cm">// DELETE with no response body</span>
+<span class="kw">struct</span> <span class="ty">DeleteUserEndpoint</span>: <span class="ty">Endpoint</span> {
+    <span class="kw">typealias</span> <span class="ty">Response</span> = <span class="ty">EmptyResponse</span>
+    <span class="kw">var</span> path: <span class="ty">String</span> { <span class="st">"/users/\(id)"</span> }
+    <span class="kw">var</span> method: <span class="ty">HTTPMethod</span> { .<span class="fn">delete</span> }
+    <span class="kw">let</span> id: <span class="ty">Int</span>
+}</code></pre>
+
+  <div class="page-nav">
+    <a class="page-nav-btn" href="#" onclick="showPage('quickstart')"><span class="page-nav-label">Previous</span><span class="page-nav-title">← Quick Start</span></a>
+    <a class="page-nav-btn next" href="#" onclick="showPage('plugin-system')"><span class="page-nav-label">Next</span><span class="page-nav-title">Plugin System →</span></a>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ PLUGIN SYSTEM -->
+<div class="page-section" id="page-plugin-system">
+  <div class="hero" style="padding-bottom:32px">
+    <h1>Plugin System</h1>
+    <p>Plugins are composable middleware that intercept every request and response. They are PulseKit's most powerful extensibility mechanism.</p>
+  </div>
+
+  <h2>How it works</h2>
+  <p>Plugins form a symmetric pipeline. They execute <strong>in order</strong> during request preparation and in <strong>reverse order</strong> during response handling — exactly like Express.js middleware or an onion model.</p>
+
+  <div class="arch-diagram">┌──────────────────────────────────────────────────────────────┐
+│  plugins: [AuthPlugin, CachePlugin, LoggerPlugin, RetryPlugin] │
+└──────────────────────────────────────────────────────────────┘
+
+  REQUEST FLOW  →  Auth → Cache → Logger → [Network]
+  RESPONSE FLOW ←  Auth ← Cache ← Logger ← [Network]</div>
+
+  <h2>The PulsePlugin protocol</h2>
+  <pre>
+<div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="kw">public protocol</span> <span class="ty">PulsePlugin</span>: <span class="ty">Sendable</span> {
+    <span class="kw">var</span> identifier: <span class="ty">String</span> { <span class="kw">get</span> }
+
+    <span class="cm">/// Modify the request before it's sent.</span>
+    <span class="cm">/// Throw a PulseError to abort the entire request.</span>
+    <span class="kw">func</span> <span class="fn">prepare</span>(<span class="op">_</span> request: <span class="kw">inout</span> <span class="ty">URLRequest</span>,
+                  for context: <span class="ty">PluginContext</span>) <span class="kw">async throws</span>
+
+    <span class="cm">/// Called just before the request is dispatched. Great for logging.</span>
+    <span class="kw">func</span> <span class="fn">willSend</span>(<span class="op">_</span> request: <span class="ty">URLRequest</span>,
+                   for context: <span class="ty">PluginContext</span>) <span class="kw">async</span>
+
+    <span class="cm">/// Intercept the response. Return nil to pass through unchanged.</span>
+    <span class="kw">func</span> <span class="fn">didReceive</span>(<span class="op">_</span> result: <span class="ty">Result</span>&lt;<span class="ty">PulseResponse</span>, <span class="ty">PulseError</span>&gt;,
+                     for context: <span class="ty">PluginContext</span>) <span class="kw">async</span>
+        -> <span class="ty">Result</span>&lt;<span class="ty">PulseResponse</span>, <span class="ty">PulseError</span>&gt;<span class="op">?</span>
+
+    <span class="cm">/// Called when the full cycle is done. Good for cleanup.</span>
+    <span class="kw">func</span> <span class="fn">didComplete</span>(<span class="op">_</span> context: <span class="ty">PluginContext</span>) <span class="kw">async</span>
+}</code></pre>
+
+  <h2>PluginContext</h2>
+  <p>A thread-safe context object passed through the entire plugin lifecycle. Use it to share data between <code>prepare</code> and <code>didReceive</code> in the same request — for example, storing a start time for latency measurement.</p>
+  <pre>
+<div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="kw">struct</span> <span class="ty">TimingPlugin</span>: <span class="ty">PulsePlugin</span> {
+    <span class="kw">let</span> identifier = <span class="st">"com.myapp.timing"</span>
+
+    <span class="kw">func</span> <span class="fn">prepare</span>(<span class="op">_</span> request: <span class="kw">inout</span> <span class="ty">URLRequest</span>,
+                  for context: <span class="ty">PluginContext</span>) <span class="kw">async throws</span> {
+        context.store[<span class="st">"start"</span>] = <span class="ty">Date</span>()
+    }
+
+    <span class="kw">func</span> <span class="fn">didReceive</span>(<span class="op">_</span> result: <span class="ty">Result</span>&lt;<span class="ty">PulseResponse</span>, <span class="ty">PulseError</span>&gt;,
+                     for context: <span class="ty">PluginContext</span>) <span class="kw">async</span>
+        -> <span class="ty">Result</span>&lt;<span class="ty">PulseResponse</span>, <span class="ty">PulseError</span>&gt;<span class="op">?</span> {
+        <span class="kw">let</span> elapsed = <span class="ty">Date</span>().<span class="fn">timeIntervalSince</span>(
+            context.store[<span class="st">"start"</span>] <span class="kw">as!</span> <span class="ty">Date</span>
+        )
+        print(<span class="st">"⏱ \(context.endpointPath): \(elapsed * 1000)ms"</span>)
+        <span class="kw">return nil</span> <span class="cm">// pass through unchanged</span>
+    }
+}</code></pre>
+
+  <h2>Built-in plugins</h2>
+  <div class="plugin-list">
+    <div class="plugin-item">
+      <div class="plugin-icon" style="background:var(--green-bg)">🔐</div>
+      <div class="plugin-meta">
+        <div class="plugin-name">AuthPlugin</div>
+        <div class="plugin-desc">Injects Bearer tokens into every request. Automatically detects 401 responses and refreshes tokens transparently using an <code>AsyncMutex</code> to prevent token-refresh storms.</div>
+        <span class="plugin-tag">com.pulse.auth</span>
+      </div>
+    </div>
+    <div class="plugin-item">
+      <div class="plugin-icon" style="background:var(--accent-light)">📋</div>
+      <div class="plugin-meta">
+        <div class="plugin-name">LoggerPlugin</div>
+        <div class="plugin-desc">Structured request/response logging with sensitive header redaction. Configurable verbosity from <code>.minimal</code> to <code>.verbose</code>. Never logs to production.</div>
+        <span class="plugin-tag">com.pulse.logger</span>
+      </div>
+    </div>
+    <div class="plugin-item">
+      <div class="plugin-icon" style="background:var(--orange-bg)">🔁</div>
+      <div class="plugin-meta">
+        <div class="plugin-name">RetryPlugin</div>
+        <div class="plugin-desc">Exponential backoff with full jitter to prevent thundering-herd problems. Custom <code>shouldRetry</code> closure for per-error decisions.</div>
+        <span class="plugin-tag">com.pulse.retry</span>
+      </div>
+    </div>
+    <div class="plugin-item">
+      <div class="plugin-icon" style="background:var(--purple-bg)">💾</div>
+      <div class="plugin-meta">
+        <div class="plugin-name">CachePlugin</div>
+        <div class="plugin-desc">TTL-based in-memory cache for GET responses. Actor-isolated for thread safety. Respects HTTP methods — never caches POST/PUT/DELETE.</div>
+        <span class="plugin-tag">com.pulse.cache</span>
+      </div>
+    </div>
+    <div class="plugin-item">
+      <div class="plugin-icon" style="background:var(--red-bg)">⚡</div>
+      <div class="plugin-meta">
+        <div class="plugin-name">CircuitBreakerPlugin</div>
+        <div class="plugin-desc">Prevents cascade failures. Trips open after a configurable failure threshold. Allows one probe request after the cooldown period, then closes on success.</div>
+        <span class="plugin-tag">com.pulse.circuit-breaker</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout warning">
+    <span class="callout-icon">⚠</span>
+    <div class="callout-body">
+      <p class="callout-title">Plugin order matters</p>
+      <p class="callout-text">Always place <code>AuthPlugin</code> first so it can inject tokens before other plugins see the request. Place <code>LoggerPlugin</code> last in the prepare chain so it logs the fully-modified request.</p>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <a class="page-nav-btn" href="#" onclick="showPage('endpoints')"><span class="page-nav-label">Previous</span><span class="page-nav-title">← Endpoints</span></a>
+    <a class="page-nav-btn next" href="#" onclick="showPage('offline')"><span class="page-nav-label">Next</span><span class="page-nav-title">Offline-First →</span></a>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ OFFLINE -->
+<div class="page-section" id="page-offline">
+  <div class="hero" style="padding-bottom:32px">
+    <h1>Offline-First</h1>
+    <p>PulseKit can queue failed requests when the device has no connectivity and replay them automatically when the network returns — with zero extra code at the call site.</p>
+  </div>
+
+  <h2>Enabling the offline queue</h2>
+  <p>First, opt an endpoint in with a single property:</p>
+  <pre>
+<div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="kw">struct</span> <span class="ty">SyncProgressEndpoint</span>: <span class="ty">Endpoint</span> {
+    <span class="kw">typealias</span> <span class="ty">Response</span> = <span class="ty">EmptyResponse</span>
+    <span class="kw">var</span> path: <span class="ty">String</span> { <span class="st">"/progress/sync"</span> }
+    <span class="kw">var</span> method: <span class="ty">HTTPMethod</span> { .<span class="fn">post</span> }
+    <span class="kw">var</span> body: <span class="ty">RequestBody</span> { .<span class="fn">json</span>(payload) }
+
+    <span class="cm">// ↓ This single property enables offline queueing</span>
+    <span class="kw">var</span> isQueueableWhenOffline: <span class="ty">Bool</span> { <span class="kw">true</span> }
+
+    <span class="kw">let</span> payload: <span class="ty">ProgressPayload</span>
+}</code></pre>
+
+  <h3>Configure queue policy</h3>
+  <pre>
+<div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="kw">let</span> config = <span class="ty">PulseConfiguration</span>(baseURL: url)
+    .<span class="fn">with</span>(<span class="op">\</span>.<span class="pr">offlineQueuePolicy</span>, value: <span class="ty">OfflineQueuePolicy</span>(
+        isEnabled:     <span class="kw">true</span>,
+        maxQueueSize:  <span class="nu">100</span>,      <span class="cm">// Max requests held in memory + disk</span>
+        persistsToDisk: <span class="kw">true</span>,    <span class="cm">// Survives app restarts</span>
+        requestExpiry: <span class="nu">86400</span>     <span class="cm">// Expire after 24 hours</span>
+    ))</code></pre>
+
+  <h2>How it works</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>Request fails with <code>noConnection</code></h3>
+        <p>When PulseKit receives a <code>PulseError.noConnection</code> for an endpoint where <code>isQueueableWhenOffline == true</code>, it serializes the full URLRequest and adds it to the queue.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>Persisted to disk atomically</h3>
+        <p>The queue is written to a JSONL file using an atomic rename (write to <code>.tmp</code>, then rename). This prevents corruption if the app is killed during a write.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>NWPathMonitor detects connectivity</h3>
+        <p>The offline queue holds an <code>NWPathMonitor</code> that fires when the network path transitions from <code>.unsatisfied</code> to <code>.satisfied</code>.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h3>Queue drains automatically</h3>
+        <p>All non-expired queued requests are replayed in order through the full plugin pipeline. Expired requests (past their TTL) are pruned silently.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout important">
+    <span class="callout-icon">◆</span>
+    <div class="callout-body">
+      <p class="callout-title">Never queue financial transactions</p>
+      <p class="callout-text">Set <code>offlineQueuePolicy: .disabled</code> for payment or banking clients. Replaying payment requests when connectivity returns can cause duplicate charges. Use idempotency keys and server-side deduplication instead.</p>
+    </div>
+  </div>
+
+  <h2>Observing queue events</h2>
+  <pre>
+<div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="ty">PulseEventBus</span>.shared.events
+    .<span class="fn">sink</span> { event <span class="kw">in</span>
+        <span class="kw">switch</span> event {
+        <span class="kw">case</span> .<span class="fn">offlineQueueDraining</span>(<span class="kw">let</span> count):
+            print(<span class="st">"📡 Replaying \(count) queued requests"</span>)
+        <span class="kw">case</span> .<span class="fn">offlineQueueRequestCompleted</span>(<span class="kw">let</span> id, <span class="kw">let</span> success):
+            print(<span class="st">"Request \(id): \(success ? "✓" : "✗")"</span>)
+        <span class="kw">default</span>: <span class="kw">break</span>
+        }
+    }
+    .<span class="fn">store</span>(in: <span class="op">&</span>cancellables)</code></pre>
+
+  <div class="page-nav">
+    <a class="page-nav-btn" href="#" onclick="showPage('plugin-system')"><span class="page-nav-label">Previous</span><span class="page-nav-title">← Plugin System</span></a>
+    <a class="page-nav-btn next" href="#" onclick="showPage('swiftui')"><span class="page-nav-label">Next</span><span class="page-nav-title">SwiftUI Integration →</span></a>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ SWIFTUI -->
+<div class="page-section" id="page-swiftui">
+  <div class="hero" style="padding-bottom:32px">
+    <h1>SwiftUI Integration</h1>
+    <p>The <code>@APIRequest</code> property wrapper collapses the entire async request lifecycle into a single line of view code.</p>
+  </div>
+
+  <h2>@APIRequest</h2>
+  <pre>
+<div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="kw">struct</span> <span class="ty">MoviesView</span>: <span class="ty">View</span> {
+    <span class="at">@APIRequest</span>(<span class="ty">GetMoviesEndpoint</span>(), autoFetch: <span class="kw">true</span>)
+    <span class="kw">var</span> movies: <span class="ty">RequestPhase</span>&lt;[<span class="ty">Movie</span>]&gt;
+
+    <span class="kw">var</span> body: <span class="kw">some</span> <span class="ty">View</span> {
+        <span class="ty">Group</span> {
+            <span class="kw">switch</span> movies {
+            <span class="kw">case</span> .<span class="fn">idle</span>:
+                <span class="ty">Button</span>(<span class="st">"Load"</span>) { $movies.<span class="fn">fetch</span>() }
+            <span class="kw">case</span> .<span class="fn">loading</span>:
+                <span class="ty">ProgressView</span>()
+            <span class="kw">case</span> .<span class="fn">success</span>(<span class="kw">let</span> list):
+                <span class="ty">MovieList</span>(movies: list)
+                    .<span class="fn">refreshable</span> { $movies.<span class="fn">refresh</span>() }
+            <span class="kw">case</span> .<span class="fn">refreshing</span>(<span class="kw">let</span> list):
+                <span class="cm">// Still show old data while new data loads</span>
+                <span class="ty">MovieList</span>(movies: list)
+                    .<span class="fn">overlay</span>(<span class="ty">ProgressView</span>())
+            <span class="kw">case</span> .<span class="fn">failure</span>(<span class="kw">let</span> error):
+                <span class="ty">ErrorView</span>(error: error) {
+                    $movies.<span class="fn">fetch</span>()  <span class="cm">// Retry</span>
+                }
+            }
+        }
+    }
+}</code></pre>
+
+  <h3>RequestPhase</h3>
+  <div class="param-table">
+    <div class="param-row"><div class="param-name">.idle</div><div class="param-desc">Initial state. No request has been made. Show a prompt or empty state.</div></div>
+    <div class="param-row"><div class="param-name">.loading</div><div class="param-desc">A request is in-flight with no previous data. Show a full-screen skeleton or spinner.</div></div>
+    <div class="param-row"><div class="param-name">.success(T)</div><div class="param-desc">Request succeeded. Associated value is the decoded response.</div></div>
+    <div class="param-row"><div class="param-name">.refreshing(T)</div><div class="param-desc">Refreshing with previous data still available. Keep showing the old data with a subtle loading indicator.</div></div>
+    <div class="param-row"><div class="param-name">.failure(PulseError)</div><div class="param-desc">Request failed. Show an error state with a retry button.</div></div>
+  </div>
+
+  <h2>Environment injection</h2>
+  <p>Inject different clients for testing and previews using the SwiftUI environment:</p>
+  <pre>
+<div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="cm">// In your app or scene</span>
+<span class="ty">ContentView</span>()
+    .<span class="fn">environment</span>(<span class="op">\</span>.<span class="pr">pulseClient</span>, productionClient)
+
+<span class="cm">// In Xcode Previews</span>
+<span class="kw">struct</span> <span class="ty">MoviesView_Previews</span>: <span class="ty">PreviewProvider</span> {
+    <span class="kw">static var</span> previews: <span class="kw">some</span> <span class="ty">View</span> {
+        <span class="ty">MoviesView</span>()
+            .<span class="fn">environment</span>(<span class="op">\</span>.<span class="pr">pulseClient</span>, .<span class="fn">preview</span>())
+    }
+}</code></pre>
+
+  <h2>Pagination with @PaginatedRequest</h2>
+  <pre>
+<div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="kw">struct</span> <span class="ty">FeedView</span>: <span class="ty">View</span> {
+    <span class="at">@PaginatedRequest</span>(<span class="ty">GetPostsEndpoint</span>(page: <span class="nu">1</span>))
+    <span class="kw">var</span> feed: <span class="ty">PaginatedPhase</span>&lt;[<span class="ty">Post</span>]&gt;
+
+    <span class="kw">var</span> body: <span class="kw">some</span> <span class="ty">View</span> {
+        <span class="ty">List</span> {
+            <span class="ty">ForEach</span>(feed.items <span class="op">??</span> []) { post <span class="kw">in</span>
+                <span class="ty">PostRow</span>(post: post)
+            }
+            <span class="cm">// Infinite scroll trigger</span>
+            <span class="kw">if case</span> .<span class="fn">loaded</span>(<span class="op">_</span>, hasMore: <span class="kw">true</span>) = feed {
+                <span class="ty">ProgressView</span>()
+                    .<span class="fn">onAppear</span> { $feed.<span class="fn">loadMore</span>() }
+            }
+        }
+        .<span class="fn">refreshable</span> { $feed.<span class="fn">refresh</span>() }
+    }
+}</code></pre>
+
+  <div class="page-nav">
+    <a class="page-nav-btn" href="#" onclick="showPage('offline')"><span class="page-nav-label">Previous</span><span class="page-nav-title">← Offline-First</span></a>
+    <a class="page-nav-btn next" href="#" onclick="showPage('testing')"><span class="page-nav-label">Next</span><span class="page-nav-title">Testing Guide →</span></a>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ TESTING -->
+<div class="page-section" id="page-testing">
+  <div class="hero" style="padding-bottom:32px">
+    <h1>Testing Guide</h1>
+    <p>PulseKit is designed with testing as a first-class concern. Every component is protocol-based and injectable, so you never need to hit a real server in tests.</p>
+  </div>
+
+  <h2>MockTransport</h2>
+  <p>Swap <code>URLSessionTransport</code> with <code>MockTransport</code> to provide any response your test needs:</p>
+  <pre>
+<div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="kw">func</span> <span class="fn">test_request_decodesSuccessfully</span>() <span class="kw">async throws</span> {
+    <span class="kw">let</span> user = <span class="ty">User</span>(id: <span class="nu">1</span>, name: <span class="st">"Alice"</span>, email: <span class="st">"alice@example.com"</span>)
+
+    <span class="kw">let</span> transport = <span class="ty">MockTransport</span> { request <span class="kw">in</span>
+        <span class="kw">let</span> data = <span class="kw">try</span> <span class="ty">JSONEncoder</span>().<span class="fn">encode</span>(user)
+        <span class="kw">return</span> <span class="ty">PulseResponse</span>(
+            data: data,
+            httpResponse: .<span class="fn">mock</span>(statusCode: <span class="nu">200</span>),
+            request: request,
+            latency: <span class="nu">0.01</span>
+        )
+    }
+
+    <span class="kw">let</span> client = <span class="ty">PulseClient</span>(
+        configuration: <span class="ty">PulseConfiguration</span>(baseURL: url),
+        transport: transport
+    )
+
+    <span class="kw">let</span> result: <span class="ty">User</span> = <span class="kw">try await</span> client.<span class="fn">request</span>(<span class="ty">GetUserEndpoint</span>(id: <span class="nu">1</span>))
+    <span class="fn">XCTAssertEqual</span>(result.name, <span class="st">"Alice"</span>)
+}</code></pre>
+
+  <h2>Testing error paths</h2>
+  <pre>
+<div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="kw">func</span> <span class="fn">test_request_throws401AsUnauthorized</span>() <span class="kw">async throws</span> {
+    <span class="kw">let</span> transport = <span class="ty">MockTransport</span> { request <span class="kw">in</span>
+        <span class="ty">PulseResponse</span>(
+            data: <span class="ty">Data</span>(),
+            httpResponse: .<span class="fn">mock</span>(statusCode: <span class="nu">401</span>),
+            request: request, latency: <span class="nu">0.01</span>
+        )
+    }
+    <span class="kw">let</span> client = <span class="ty">PulseClient</span>(configuration: config, transport: transport)
+
+    <span class="kw">do</span> {
+        <span class="kw">let</span> <span class="op">_</span>: <span class="ty">User</span> = <span class="kw">try await</span> client.<span class="fn">request</span>(<span class="ty">GetUserEndpoint</span>(id: <span class="nu">1</span>))
+        <span class="fn">XCTFail</span>(<span class="st">"Expected .unauthorized"</span>)
+    } <span class="kw">catch</span> <span class="ty">PulseError</span>.unauthorized {
+        <span class="cm">// Expected ✓</span>
+    }
+}</code></pre>
+
+  <h2>Testing retry behavior</h2>
+  <pre>
+<div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="kw">func</span> <span class="fn">test_retry_succeedsOnThirdAttempt</span>() <span class="kw">async throws</span> {
+    <span class="kw">var</span> callCount = <span class="nu">0</span>
+
+    <span class="kw">let</span> transport = <span class="ty">MockTransport</span> { request <span class="kw">in</span>
+        callCount <span class="op">+=</span> <span class="nu">1</span>
+        <span class="kw">if</span> callCount <span class="op">&lt;</span> <span class="nu">3</span> {
+            <span class="kw">return</span> <span class="ty">PulseResponse</span>(data: <span class="ty">Data</span>(),
+                httpResponse: .<span class="fn">mock</span>(statusCode: <span class="nu">503</span>),
+                request: request, latency: <span class="nu">0.01</span>)
+        }
+        <span class="kw">let</span> data = <span class="kw">try</span> <span class="ty">JSONEncoder</span>().<span class="fn">encode</span>(<span class="ty">User</span>(id: <span class="nu">1</span>, name: <span class="st">"Alice"</span>))
+        <span class="kw">return</span> <span class="ty">PulseResponse</span>(data: data,
+            httpResponse: .<span class="fn">mock</span>(statusCode: <span class="nu">200</span>),
+            request: request, latency: <span class="nu">0.01</span>)
+    }
+
+    <span class="kw">let</span> retryConfig = config.<span class="fn">with</span>(<span class="op">\</span>.<span class="pr">retryPolicy</span>, value: <span class="ty">RetryPolicy</span>(
+        maxAttempts: <span class="nu">3</span>,
+        backoffStrategy: .<span class="fn">immediate</span>,  <span class="cm">// No delay in tests!</span>
+        retryableStatusCodes: [<span class="nu">503</span>],
+        retryOnTimeout: <span class="kw">false</span>,
+        retryOnNoConnection: <span class="kw">false</span>
+    ))
+
+    <span class="kw">let</span> client = <span class="ty">PulseClient</span>(configuration: retryConfig, transport: transport)
+    <span class="kw">let</span> result: <span class="ty">User</span> = <span class="kw">try await</span> client.<span class="fn">request</span>(<span class="ty">GetUserEndpoint</span>(id: <span class="nu">1</span>))
+
+    <span class="fn">XCTAssertEqual</span>(callCount, <span class="nu">3</span>)
+    <span class="fn">XCTAssertEqual</span>(result.name, <span class="st">"Alice"</span>)
+}</code></pre>
+
+  <div class="callout tip">
+    <span class="callout-icon">✦</span>
+    <div class="callout-body">
+      <p class="callout-title">Use .immediate backoff in tests</p>
+      <p class="callout-text">Always set <code>backoffStrategy: .immediate</code> in test configurations. Exponential backoff causes tests to run slowly and timeouts to become flaky. Save real delay strategies for production configs.</p>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <a class="page-nav-btn" href="#" onclick="showPage('swiftui')"><span class="page-nav-label">Previous</span><span class="page-nav-title">← SwiftUI Integration</span></a>
+    <a class="page-nav-btn next" href="#" onclick="showPage('security')"><span class="page-nav-label">Next</span><span class="page-nav-title">Security →</span></a>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ SECURITY -->
+<div class="page-section" id="page-security">
+  <div class="hero" style="padding-bottom:32px">
+    <h1>Security</h1>
+    <p>PulseKit provides multiple security layers suitable for fintech, healthcare, and enterprise applications.</p>
+  </div>
+
+  <h2>SSL Certificate Pinning</h2>
+  <p>Pin against public key hashes (recommended) or full certificate data:</p>
+  <pre>
+<div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="kw">let</span> config = <span class="ty">PulseConfiguration</span>(baseURL: apiURL)
+    .<span class="fn">with</span>(<span class="op">\</span>.<span class="pr">sslPinningPolicy</span>, value: .<span class="fn">publicKeyHashes</span>([
+        <span class="st">"sha256/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="</span>, <span class="cm">// Primary</span>
+        <span class="st">"sha256/BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB="</span>  <span class="cm">// Backup ← always pin two!</span>
+    ]))</code></pre>
+
+  <div class="callout warning">
+    <span class="callout-icon">⚠</span>
+    <div class="callout-body">
+      <p class="callout-title">Always pin two certificates</p>
+      <p class="callout-text">Pin your current certificate <em>and</em> your backup/next certificate. If you only pin one and it expires, your app will be unable to connect until users update. Certificate rotation without a forced update requires a backup pin already deployed.</p>
+    </div>
+  </div>
+
+  <h2>HMAC Request Signing</h2>
+  <pre>
+<div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="kw">let</span> signingPlugin = <span class="ty">RequestSigningPlugin</span>(
+    secret: <span class="ty">ProcessInfo</span>.processInfo.environment[<span class="st">"API_SIGNING_SECRET"</span>]<span class="op">!</span>,
+    signatureHeader: <span class="st">"X-Signature-256"</span>
+)
+
+<span class="cm">// Each request gets: X-Pulse-Timestamp + X-Signature-256</span>
+<span class="cm">// Signature = HMAC-SHA256(METHOD|PATH|TIMESTAMP|BODY_HASH)</span></code></pre>
+
+  <h2>Sensitive header redaction</h2>
+  <pre>
+<div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="kw">let</span> logger = <span class="ty">LoggerPlugin</span>(options: .<span class="fn">init</span>(
+    verbosity: .standard,
+    sensitiveHeaders: [
+        <span class="st">"Authorization"</span>,
+        <span class="st">"X-API-Key"</span>,
+        <span class="st">"Cookie"</span>,
+        <span class="st">"X-Signature-256"</span>
+    ]
+))
+<span class="cm">// These headers appear as "***REDACTED***" in logs</span></code></pre>
+
+  <div class="page-nav">
+    <a class="page-nav-btn" href="#" onclick="showPage('testing')"><span class="page-nav-label">Previous</span><span class="page-nav-title">← Testing Guide</span></a>
+    <a class="page-nav-btn next" href="#" onclick="showPage('observability')"><span class="page-nav-label">Next</span><span class="page-nav-title">Observability →</span></a>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ OBSERVABILITY -->
+<div class="page-section" id="page-observability">
+  <div class="hero" style="padding-bottom:32px">
+    <h1>Observability</h1>
+    <p>PulseKit emits structured events for every request lifecycle, and collects latency percentiles, error rates, and per-endpoint statistics automatically.</p>
+  </div>
+
+  <h2>Event Bus</h2>
+  <pre>
+<div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="ty">PulseEventBus</span>.shared.events
+    .<span class="fn">sink</span> { event <span class="kw">in</span>
+        <span class="kw">switch</span> event {
+        <span class="kw">case</span> .<span class="fn">requestCompleted</span>(<span class="kw">let</span> result, <span class="kw">let</span> context, <span class="kw">let</span> latency):
+            analytics.<span class="fn">track</span>(latency: latency, path: context.endpointPath)
+
+        <span class="kw">case</span> .<span class="fn">circuitBreakerOpened</span>(<span class="kw">let</span> endpoint):
+            alerting.<span class="fn">fire</span>(.<span class="fn">circuitBreakerOpen</span>, endpoint: endpoint)
+
+        <span class="kw">case</span> .<span class="fn">requestRetrying</span>(<span class="kw">let</span> context, <span class="kw">let</span> error, <span class="kw">let</span> attempt):
+            print(<span class="st">"↩ Retry \(attempt) for \(context.endpointPath): \(error)"</span>)
+
+        <span class="kw">default</span>: <span class="kw">break</span>
+        }
+    }
+    .<span class="fn">store</span>(in: <span class="op">&</span>cancellables)</code></pre>
+
+  <h2>Metrics collection</h2>
+  <pre>
+<div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="kw">let</span> metrics = <span class="ty">PulseMetricsCollector</span>()
+metrics.<span class="fn">attach</span>(to: <span class="ty">PulseEventBus</span>.shared)
+
+<span class="cm">// At any point, take a snapshot</span>
+<span class="kw">let</span> snapshot = <span class="kw">await</span> metrics.<span class="fn">snapshot</span>()
+print(<span class="st">"Success rate: \(snapshot.successRate * 100)%"</span>)
+print(<span class="st">"p50 latency:  \(snapshot.p50Latency * 1000)ms"</span>)
+print(<span class="st">"p99 latency:  \(snapshot.p99Latency * 1000)ms"</span>)</code></pre>
+
+  <h2>SwiftUI debug panel</h2>
+  <pre>
+<div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="at">#if</span> DEBUG
+<span class="kw">import</span> <span class="ty">PulseUI</span>
+<span class="at">#endif</span>
+
+<span class="kw">struct</span> <span class="ty">SettingsView</span>: <span class="ty">View</span> {
+    <span class="at">@State</span> <span class="kw">private var</span> showDebugger = <span class="kw">false</span>
+
+    <span class="kw">var</span> body: <span class="kw">some</span> <span class="ty">View</span> {
+        <span class="ty">List</span> {
+            <span class="at">#if</span> DEBUG
+            <span class="ty">Button</span>(<span class="st">"Network Inspector"</span>) { showDebugger = <span class="kw">true</span> }
+                .<span class="fn">sheet</span>(isPresented: <span class="op">$</span>showDebugger) {
+                    <span class="ty">NavigationView</span> { <span class="ty">PulseDebugView</span>() }
+                }
+            <span class="at">#endif</span>
+        }
+    }
+}</code></pre>
+
+  <div class="callout note">
+    <span class="callout-icon">ℹ</span>
+    <div class="callout-body">
+      <p class="callout-title">Only import PulseUI in debug builds</p>
+      <p class="callout-text">Wrap all <code>import PulseUI</code> statements in <code>#if DEBUG</code>. The debug panel keeps a rolling log of the last 500 requests in memory, which is unnecessary overhead in production builds.</p>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <a class="page-nav-btn" href="#" onclick="showPage('security')"><span class="page-nav-label">Previous</span><span class="page-nav-title">← Security</span></a>
+    <a class="page-nav-btn next" href="#" onclick="showPage('api')"><span class="page-nav-label">Next</span><span class="page-nav-title">API Reference →</span></a>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ API REFERENCE -->
+<div class="page-section" id="page-api">
+  <div class="hero" style="padding-bottom:32px">
+    <h1>API Reference</h1>
+    <p>Quick reference for the most commonly used types and methods in PulseKit.</p>
+  </div>
+  <h2>PulseClient</h2>
+  <div class="param-table">
+    <div class="param-row"><div class="param-name">request(_:)</div><div class="param-desc">Makes a typed request and returns the decoded response.<span class="param-type">async throws → E.Response</span></div></div>
+    <div class="param-row"><div class="param-name">rawRequest(_:)</div><div class="param-desc">Returns the raw <code>PulseResponse</code> without decoding.<span class="param-type">async throws → PulseResponse</span></div></div>
+    <div class="param-row"><div class="param-name">publisher(for:)</div><div class="param-desc">Returns a Combine publisher that emits once and completes.<span class="param-type">PulsePublisher&lt;E.Response&gt;</span></div></div>
+    <div class="param-row"><div class="param-name">graphQL(query:variables:responseType:)</div><div class="param-desc">Sends a GraphQL query and decodes the <code>data</code> field.<span class="param-type">async throws → T</span></div></div>
+    <div class="param-row"><div class="param-name">PulseClient.default</div><div class="param-desc">Shared client. Configure at app startup. Used by <code>@APIRequest</code>.<span class="param-type">static var PulseClient</span></div></div>
+  </div>
+  <h2>PulseError</h2>
+  <div class="param-table">
+    <div class="param-row"><div class="param-name">.noConnection</div><div class="param-desc">Device has no network connectivity. Retryable by the offline queue.</div></div>
+    <div class="param-row"><div class="param-name">.timeout(URLRequest)</div><div class="param-desc">Request timed out. Retryable.</div></div>
+    <div class="param-row"><div class="param-name">.unauthorized</div><div class="param-desc">401 response. Token refresh attempted; redirect to login if it fails.</div></div>
+    <div class="param-row"><div class="param-name">.rateLimited(retryAfter:)</div><div class="param-desc">429 response. <code>retryAfter</code> contains the server's Retry-After header value in seconds.</div></div>
+    <div class="param-row"><div class="param-name">.decodingFailed(type:underlying:)</div><div class="param-desc">Response could not be decoded. <code>type</code> is the Swift type name for debugging.</div></div>
+    <div class="param-row"><div class="param-name">.sslPinningFailed(host:)</div><div class="param-desc">Certificate validation failed against pinned hashes. Do not retry.</div></div>
+    <div class="param-row"><div class="param-name">isRetryable</div><div class="param-desc">Convenience property. Returns <code>true</code> for timeout, noConnection, 5xx, and rateLimited.<span class="param-type">Bool</span></div></div>
+  </div>
+
+  <div class="page-nav">
+    <a class="page-nav-btn" href="#" onclick="showPage('observability')"><span class="page-nav-label">Previous</span><span class="page-nav-title">← Observability</span></a>
+    <div></div>
+  </div>
+</div>
+
+<!-- Stub pages for nav items without full content -->
+<div class="page-section" id="page-configuration">
+  <div class="hero" style="padding-bottom:32px"><h1>Configuration</h1><p>Customize PulseKit for your app's specific needs.</p></div>
+  <pre><div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="kw">let</span> config = <span class="ty">PulseConfiguration</span>(baseURL: url)
+    .<span class="fn">with</span>(<span class="op">\</span>.<span class="pr">timeout</span>, value: <span class="nu">20</span>)
+    .<span class="fn">with</span>(<span class="op">\</span>.<span class="pr">retryPolicy</span>, value: .default)
+    .<span class="fn">with</span>(<span class="op">\</span>.<span class="pr">logLevel</span>, value: .info)
+    .<span class="fn">with</span>(<span class="op">\</span>.<span class="pr">defaultHeaders</span>, value: [
+        <span class="st">"X-App-Version"</span>: appVersion,
+        <span class="st">"X-Platform"</span>: <span class="st">"iOS"</span>
+    ])</code></pre>
+  <div class="page-nav"><a class="page-nav-btn" href="#" onclick="showPage('quickstart')"><span class="page-nav-label">Previous</span><span class="page-nav-title">← Quick Start</span></a><a class="page-nav-btn next" href="#" onclick="showPage('endpoints')"><span class="page-nav-label">Next</span><span class="page-nav-title">Endpoints →</span></a></div>
+</div>
+
+<div class="page-section" id="page-client"><div class="hero" style="padding-bottom:32px"><h1>PulseClient</h1><p>The main entry point into PulseKit.</p></div><div class="callout note"><span class="callout-icon">ℹ</span><div class="callout-body"><p class="callout-title">See Quick Start</p><p class="callout-text">Full PulseClient documentation is covered in the <a href="#" onclick="showPage('quickstart')">Quick Start</a> and <a href="#" onclick="showPage('api')">API Reference</a> sections.</p></div></div></div>
+
+<div class="page-section" id="page-errors"><div class="hero" style="padding-bottom:32px"><h1>Error Handling</h1><p>PulseKit uses a typed error hierarchy for clean error handling at call sites.</p></div><pre><div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="kw">do</span> {
+    <span class="kw">let</span> user: <span class="ty">User</span> = <span class="kw">try await</span> client.<span class="fn">request</span>(<span class="ty">GetUserEndpoint</span>(id: <span class="nu">1</span>))
+} <span class="kw">catch let</span> error <span class="kw">as</span> <span class="ty">PulseError</span> {
+    <span class="kw">switch</span> error {
+    <span class="kw">case</span> .<span class="fn">noConnection</span>:
+        showOfflineBanner()
+    <span class="kw">case</span> .<span class="fn">unauthorized</span>:
+        navigateToLogin()
+    <span class="kw">case</span> .<span class="fn">rateLimited</span>(<span class="kw">let</span> retryAfter):
+        showRetryBanner(delay: retryAfter)
+    <span class="kw">default</span>:
+        showGenericError(error.localizedDescription)
+    }
+}</code></pre></div>
+
+<div class="page-section" id="page-concurrency"><div class="hero" style="padding-bottom:32px"><h1>Concurrency</h1><p>PulseKit is built for Swift's structured concurrency model.</p></div><pre><div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="cm">// Structured concurrency — automatic cancellation</span>
+<span class="kw">async let</span> users    = client.<span class="fn">request</span>(<span class="ty">GetUsersEndpoint</span>())
+<span class="kw">async let</span> settings = client.<span class="fn">request</span>(<span class="ty">GetSettingsEndpoint</span>())
+<span class="kw">let</span> (u, s) = <span class="kw">try await</span> (users, settings)
+
+<span class="cm">// Task cancellation propagates into PulseKit automatically</span>
+<span class="kw">let</span> task = <span class="ty">Task</span> { <span class="kw">try await</span> client.<span class="fn">request</span>(<span class="ty">LongOperationEndpoint</span>()) }
+task.<span class="fn">cancel</span>() <span class="cm">// URLSessionTask is also cancelled</span></code></pre></div>
+
+<div class="page-section" id="page-auth-plugin"><div class="hero" style="padding-bottom:32px"><h1>AuthPlugin</h1><p>Transparent token injection and refresh handling.</p></div><pre><div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="kw">class</span> <span class="ty">MyTokenStore</span>: <span class="ty">TokenProvider</span> {
+    <span class="kw">func</span> <span class="fn">accessToken</span>() <span class="kw">async</span> -> <span class="ty">String</span><span class="op">?</span> { <span class="ty">Keychain</span>.accessToken }
+    <span class="kw">func</span> <span class="fn">refreshToken</span>() <span class="kw">async throws</span> -> <span class="ty">String</span> { <span class="cm">/* call refresh endpoint */</span> }
+    <span class="kw">func</span> <span class="fn">handleAuthenticationFailure</span>() <span class="kw">async</span> { <span class="cm">/* show login screen */</span> }
+}
+
+<span class="ty">AuthPlugin</span>(tokenProvider: <span class="ty">MyTokenStore</span>())</code></pre></div>
+
+<div class="page-section" id="page-logger-plugin"><div class="hero" style="padding-bottom:32px"><h1>LoggerPlugin</h1><p>Structured, configurable request/response logging.</p></div><pre><div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="ty">LoggerPlugin</span>(options: .<span class="fn">init</span>(
+    verbosity: .<span class="fn">verbose</span>,
+    sensitiveHeaders: [<span class="st">"Authorization"</span>],
+    maxBodyLength: <span class="nu">4096</span>,
+    output: { <span class="ty">OSLog</span>.network.<span class="fn">log</span>(<span class="op">$</span><span class="nu">0</span>) }
+))</code></pre></div>
+
+<div class="page-section" id="page-retry-plugin"><div class="hero" style="padding-bottom:32px"><h1>RetryPlugin</h1><p>Exponential backoff with full jitter for distributed systems.</p></div><pre><div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="ty">RetryPlugin</span>(
+    maxAttempts: <span class="nu">4</span>,
+    strategy: .<span class="fn">exponentialWithJitter</span>(base: <span class="nu">1.0</span>, maxDelay: <span class="nu">30</span>),
+    shouldRetry: { error <span class="kw">in</span> error.isRetryable }
+)</code></pre></div>
+
+<div class="page-section" id="page-cache-plugin"><div class="hero" style="padding-bottom:32px"><h1>CachePlugin</h1><p>TTL-based in-memory response caching for GET requests.</p></div><pre><div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="ty">CachePlugin</span>(ttl: <span class="nu">300</span>, maxMemoryItems: <span class="nu">200</span>)  <span class="cm">// 5-minute TTL</span>
+
+<span class="cm">// Manual invalidation</span>
+<span class="kw">await</span> cachePlugin.<span class="fn">invalidate</span>(url: <span class="ty">URL</span>(string: <span class="st">"/users"</span>)<span class="op">!</span>)
+<span class="kw">await</span> cachePlugin.<span class="fn">clearAll</span>()</code></pre></div>
+
+<div class="page-section" id="page-circuit-breaker"><div class="hero" style="padding-bottom:32px"><h1>CircuitBreakerPlugin</h1><p>Prevents cascade failures in distributed systems.</p></div><pre><div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="cm">// Opens after 5 failures, 30-second cooldown</span>
+<span class="ty">CircuitBreakerPlugin</span>(failureThreshold: <span class="nu">5</span>, cooldownDuration: <span class="nu">30</span>)</code></pre><div class="arch-diagram">CLOSED → (5 failures) → OPEN → (30s cooldown) → HALF-OPEN → (success) → CLOSED
+                                                            → (failure) → OPEN</div></div>
+
+<div class="page-section" id="page-websocket"><div class="hero" style="padding-bottom:32px"><h1>WebSockets</h1><p>Type-safe WebSocket connections via <code>PulseSocket</code> and <code>TypedSocket</code>.</p></div><pre><div class="code-header"><span class="code-lang">Swift</span><button class="code-copy" onclick="copyCode(this)">Copy</button></div><code><span class="kw">struct</span> <span class="ty">LiveScoresSocket</span>: <span class="ty">SocketEndpoint</span> {
+    <span class="kw">var</span> path: <span class="ty">String</span> { <span class="st">"/ws/scores"</span> }
+    <span class="kw">var</span> pingInterval: <span class="ty">TimeInterval</span> { <span class="nu">30</span> }
+}
+
+<span class="kw">let</span> socket = <span class="ty">TypedSocket</span>&lt;<span class="ty">ScoreUpdate</span>&gt;(endpoint: <span class="ty">LiveScoresSocket</span>())
+<span class="kw">await</span> socket.<span class="fn">connect</span>()
+
+<span class="kw">for await</span> update <span class="kw">in</span> socket.messages {
+    <span class="fn">updateScoreboard</span>(update)
+}</code></pre></div>
+
+<div class="page-section" id="page-migration"><div class="hero" style="padding-bottom:32px"><h1>Migration Guide</h1><p>Migrating from URLSession or Alamofire to PulseKit.</p></div><div class="callout note"><span class="callout-icon">ℹ</span><div class="callout-body"><p class="callout-title">Migration guide coming soon</p><p class="callout-text">Step-by-step migration instructions for URLSession and Alamofire integrations will be published with v1.1. In the meantime, see the <a href="#" onclick="showPage('quickstart')">Quick Start guide</a>.</p></div></div></div>
+
+</main>
+</div>
+
+<button id="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+  // Theme
+  const root = document.documentElement;
+  let dark = false;
+  function toggleTheme() {
+    dark = !dark;
+    root.setAttribute('data-theme', dark ? 'dark' : '');
+    document.querySelector('.theme-toggle').textContent = dark ? '☀️' : '🌙';
+  }
+
+  // Navigation
+  function showPage(id) {
+    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+    const section = document.getElementById('page-' + id);
+    if (section) { section.classList.add('active'); }
+    const link = document.querySelector(`nav a[onclick*="'${id}'"]`);
+    if (link) {
+      link.classList.add('active');
+      link.scrollIntoView({ block: 'nearest' });
+    }
+    document.getElementById('main-content').scrollTop = 0;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (window.innerWidth <= 768) { document.getElementById('sidebar').classList.remove('open'); }
+    return false;
+  }
+
+  // Mobile nav
+  function toggleNav() {
+    document.getElementById('sidebar').classList.toggle('open');
+  }
+
+  // Scroll-to-top button
+  const scrollBtn = document.getElementById('scroll-top');
+  window.addEventListener('scroll', () => {
+    scrollBtn.classList.toggle('visible', window.scrollY > 300);
+  });
+
+  // Copy code
+  function copyCode(btn) {
+    const pre = btn.closest('pre');
+    const code = pre.querySelector('code');
+    const text = code.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
+    });
+  }
+
+  // Intercept all nav link clicks
+  document.querySelectorAll('nav a').forEach(a => {
+    a.addEventListener('click', e => e.preventDefault());
+  });
+</script>
+</body>
+</html>
